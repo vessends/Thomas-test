@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Томаса — АГРОЭКО</title>
+    <style>
+        /* ===== ЦВЕТОВАЯ СХЕМА АГРОЭКО ===== */
+        :root {
+            --deep-green: #003F0B;
+            --light-green: #87C800;
+            --black: #000000;
+            --white: #FFFFFF;
+            --sky-blue: #41afe1;
+            --orange: #eb9732;
+            --gray: #e1e1e1;
+            --blue: #0091d7;
+            --bright-orange: #dc692d;
+            --green: #55aa32;
+            --text-dark: #1a1a1a;
+            --text-light: #555555;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--white);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px 20px 32px;
+            border: 1px solid var(--gray);
+        }
+
+        /* ===== ШАПКА ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--gray);
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--deep-green);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        /* ===== ИНСТРУКЦИЯ ===== */
+        .instruction {
+            background: #f8faf5;
+            border-left: 4px solid var(--light-green);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            font-size: 0.92rem;
+            color: var(--text-dark);
+        }
+
+        .instruction p {
+            margin-bottom: 6px;
+        }
+
+        .instruction p:last-child {
+            margin-bottom: 0;
+        }
+
+        .instruction strong {
+            color: var(--deep-green);
+        }
+
+        /* ===== ПРОГРЕСС ===== */
+        .progress-wrap {
+            margin-bottom: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--light-green), var(--deep-green));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* ===== ВОПРОСЫ ===== */
+        .question-card {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--light-green);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid var(--gray);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            background: var(--white);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option:hover {
+            border-color: var(--light-green);
+            background: #f5fbee;
+        }
+
+        .option.selected {
+            border-color: var(--deep-green);
+            background: #eef7e5;
+            box-shadow: 0 0 0 1px var(--deep-green);
+        }
+
+        .option .letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray);
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all var(--transition);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .option.selected .letter {
+            background: var(--deep-green);
+            color: var(--white);
+        }
+
+        .option .option-text {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* ===== НАВИГАЦИЯ ===== */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            flex: 1;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--deep-green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #005a10;
+            box-shadow: 0 4px 16px rgba(0, 63, 11, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: var(--gray);
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.7;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--deep-green);
+            border: 2px solid var(--deep-green);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #f0f7ea;
+        }
+
+        .btn-secondary:disabled {
+            border-color: var(--gray);
+            color: #bbb;
+            cursor: not-allowed;
+            background: var(--white);
+        }
+
+        /* ===== РЕЗУЛЬТАТЫ ===== */
+        .results {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .results h2 {
+            font-size: 1.4rem;
+            color: var(--deep-green);
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .results .result-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .result-item {
+            margin-bottom: 18px;
+            padding: 16px;
+            background: #f8faf5;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--light-green);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .result-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--deep-green);
+        }
+
+        .result-score {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--deep-green);
+            background: var(--white);
+            padding: 2px 12px;
+            border-radius: 50px;
+            border: 1px solid var(--gray);
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .result-bar-wrap {
+            width: 100%;
+            height: 6px;
+            background: var(--gray);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .result-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--light-green), var(--deep-green));
+            border-radius: 3px;
+            transition: width 0.8s ease;
+        }
+
+        .result-desc {
+            font-size: 0.88rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .result-actions .btn {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        /* ===== АДАПТИВНОСТЬ ===== */
+        @media (max-width: 600px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 18px 14px 24px;
+                border-radius: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .option {
+                padding: 12px 14px;
+                gap: 10px;
+            }
+
+            .option .letter {
+                min-width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+
+            .option .option-text {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .nav-buttons {
+                flex-direction: column-reverse;
+                gap: 8px;
+            }
+
+            .results h2 {
+                font-size: 1.2rem;
+            }
+
+            .result-item {
+                padding: 14px;
+            }
+
+            .result-actions {
+                flex-direction: column;
+            }
+
+            .result-actions .btn {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .container {
+                padding: 14px 10px 20px;
+            }
+
+            .option .option-text {
+                font-size: 0.85rem;
+            }
+
+            .question-text {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ШАПКА -->
+        <div class="header">
+            <h1>Тест Томаса</h1>
+            <div class="subtitle">Определение стиля поведения в конфликте</div>
+        </div>
+
+        <!-- ИНСТРУКЦИЯ -->
+        <div class="instruction" id="instruction">
+            <p><strong>Инструкция:</strong> Тест состоит из 30 пунктов, в каждом из которых два суждения, обозначенные буквами <strong>А</strong> и <strong>Б</strong>.</p>
+            <p>Сравнивая два суждения, выберите то, которое является <strong>более типичным для вашего поведения</strong>.</p>
+        </div>
+
+        <!-- ПРОГРЕСС -->
+        <div class="progress-wrap" id="progressWrap" style="display:none;">
+            <div class="progress-info">
+                <span>Вопрос <span id="currentQ">1</span> из 30</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- ВОПРОСЫ -->
+        <div id="questionsContainer"></div>
+
+        <!-- РЕЗУЛЬТАТЫ -->
+        <div class="results" id="results">
+            <h2>Результаты теста</h2>
+            <p class="result-subtitle">Ваши показатели по пяти стилям поведения в конфликте</p>
+            <div id="resultsList"></div>
+            <div class="result-actions">
+                <button class="btn btn-primary" onclick="restartTest()">Пройти заново</button>
+                <button class="btn btn-secondary" onclick="window.print()">Распечатать</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ДАННЫЕ ТЕСТА =====
+        const questions = [
+            {
+                a: "Иногда я предоставляю другим возможность взять на себя ответственность за решение спорного вопроса.",
+                b: "Чем обсуждать то, в чем мы расходимся, я стараюсь обратить внимание на то, в чем согласны мы оба."
+            },
+            {
+                a: "Я стараюсь найти компромиссное решение.",
+                b: "Я пытаюсь уладить дело с учетом всех интересов другого и моих собственных."
+            },
+            {
+                a: "Обычно я настойчиво стремлюсь добиться своего.",
+                b: "Я стараюсь успокоить другого и стремлюсь, главным образом, сохранить наши отношения."
+            },
+            {
+                a: "Я стараюсь найти компромиссное решение.",
+                b: "Иногда я жертвую своими собственными интересами ради интересов другого человека."
+            },
+            {
+                a: "Улаживая спорную ситуацию, я все время стараюсь найти поддержку у другого.",
+                b: "Я стараюсь сделать все, чтобы избежать бесполезной напряженности."
+            },
+            {
+                a: "Я стараюсь избежать возникновения неприятностей для себя.",
+                b: "Я стараюсь добиться своего."
+            },
+            {
+                a: "Я стараюсь отложить решение сложного вопроса с тем, чтобы со временем решить его окончательно.",
+                b: "Я считаю возможным в чем-то уступить, чтобы добиться чего-то другого."
+            },
+            {
+                a: "Обычно я настойчиво стремлюсь добиться своего.",
+                b: "Первым делом я стараюсь ясно определить то, в чем состоят все затронутые интересы и спорные вопросы."
+            },
+            {
+                a: "Думаю, что не всегда стоит волноваться из-за каких-то возникающих разногласий.",
+                b: "Я предпринимаю усилия, чтобы добиться своего."
+            },
+            {
+                a: "Я твердо стремлюсь достичь своего.",
+                b: "Я пытаюсь найти компромиссное решение."
+            },
+            {
+                a: "Первым делом я стараюсь ясно определить то, в чем состоят все затронутые интересы и спорные вопросы.",
+                b: "Я стараюсь успокоить другого и стремлюсь, главным образом, сохранить наши отношения."
+            },
+            {
+                a: "Зачастую я избегаю занимать позицию, которая может вызвать споры.",
+                b: "Я даю возможность другому в чем-то остаться при своем мнении, если он также идет навстречу мне."
+            },
+            {
+                a: "Я предлагаю среднюю позицию.",
+                b: "Я пытаюсь убедить другого в преимуществах своей позиции."
+            },
+            {
+                a: "Я сообщаю другому свою точку зрения и спрашиваю о его взглядах.",
+                b: "Я пытаюсь показать другому логику и преимущество своих взглядов."
+            },
+            {
+                a: "Я стараюсь успокоить другого и стремлюсь, главным образом, сохранить наши отношения.",
+                b: "Я стараюсь сделать все необходимое, чтобы избежать напряженности."
+            },
+            {
+                a: "Я стараюсь не задеть чувства другого.",
+                b: "Я пытаюсь убедить другого в преимуществах моей позиции."
+            },
+            {
+                a: "Обычно я настойчиво стремлюсь добиться своего.",
+                b: "Я стараюсь сделать все, чтобы избежать бесполезной напряженности."
+            },
+            {
+                a: "Если это сделает другого счастливым, я дам ему возможность настоять на своем.",
+                b: "Я дам возможность другому в чем-то оставаться при своем мнении, если он также идет мне навстречу."
+            },
+            {
+                a: "Первым делом я стараюсь ясно определить то, в чем состоят все затронутые интересы и спорные вопросы.",
+                b: "Я стараюсь отложить решение сложного вопроса с тем, чтобы со временем решить его окончательно."
+            },
+            {
+                a: "Я пытаюсь немедленно разрешить наши разногласия.",
+                b: "Я стараюсь найти наилучшее сочетание выгод и потерь для нас обоих."
+            },
+            {
+                a: "Ведя переговоры, я стараюсь быть внимательным к желаниям другого.",
+                b: "Я всегда склоняюсь к прямому обсуждению проблемы."
+            },
+            {
+                a: "Я пытаюсь найти позицию, которая находится посередине между моей и той, которая отстаивается другим.",
+                b: "Я отстаиваю свои желания."
+            },
+            {
+                a: "Как правило, я озабочен тем, чтобы удовлетворить желания каждого из нас.",
+                b: "Иногда я предоставляю другим возможность взять на себя ответственность за решение спорного вопроса."
+            },
+            {
+                a: "Если позиция другого кажется ему очень важной, я постараюсь пойти навстречу его желаниям.",
+                b: "Я стараюсь убедить другого в необходимости прийти к компромиссу."
+            },
+            {
+                a: "Я пытаюсь показать другому логику и преимущество своих взглядов.",
+                b: "Ведя переговоры, я стараюсь быть внимательным к желаниям другого."
+            },
+            {
+                a: "Я предлагаю среднюю позицию.",
+                b: "Я почти всегда озабочен тем, чтобы удовлетворить желания каждого."
+            },
+            {
+                a: "Зачастую я избегаю занимать позицию, которая может вызвать споры.",
+                b: "Если это сделает другого счастливым, я дам ему возможность настоять на своем."
+            },
+            {
+                a: "Обычно я настойчиво стремлюсь добиться своего.",
+                b: "Улаживая спорную ситуацию, я обычно стараюсь найти поддержку у другого."
+            },
+            {
+                a: "Я предлагаю среднюю позицию.",
+                b: "Думаю, что не всегда стоит волноваться из-за каких-то возникающих разногласий."
+            },
+            {
+                a: "Я стараюсь не задеть чувств другого.",
+                b: "Я всегда занимаю такую позицию в спорном вопросе, чтобы мы могли совместно с другим заинтересованным человеком добиться успеха."
+            }
+        ];
+
+        // ===== КЛЮЧ =====
+        // Каждый элемент: [Соперничество, Сотрудничество, Компромисс, Избегание, Приспособление]
+        // 1 = выбран вариант А, 2 = выбран вариант Б
+        const key = [
+            [0, 0, 0, 1, 2], // 1
+            [0, 2, 1, 0, 0], // 2
+            [1, 0, 0, 0, 2], // 3
+            [0, 0, 1, 0, 2], // 4
+            [0, 1, 0, 2, 0], // 5
+            [2, 0, 0, 1, 0], // 6
+            [0, 0, 2, 1, 0], // 7
+            [1, 2, 0, 0, 0], // 8
+            [2, 0, 0, 1, 0], // 9
+            [1, 0, 2, 0, 0], // 10
+            [0, 1, 0, 0, 2], // 11
+            [0, 0, 2, 1, 0], // 12
+            [2, 0, 1, 0, 0], // 13
+            [2, 1, 0, 0, 0], // 14
+            [0, 0, 0, 2, 1], // 15
+            [2, 0, 0, 0, 1], // 16
+            [1, 0, 0, 2, 0], // 17
+            [0, 0, 2, 0, 1], // 18
+            [0, 1, 0, 2, 0], // 19
+            [0, 1, 2, 0, 0], // 20
+            [0, 2, 0, 0, 1], // 21
+            [2, 0, 1, 0, 0], // 22
+            [0, 1, 0, 2, 0], // 23
+            [0, 0, 2, 0, 1], // 24
+            [1, 0, 0, 0, 2], // 25
+            [0, 2, 1, 0, 0], // 26
+            [0, 0, 0, 0, 2], // 27
+            [1, 2, 0, 0, 0], // 28
+            [0, 0, 1, 2, 0], // 29
+            [0, 2, 0, 0, 1]  // 30
+        ];
+
+        const styleNames = [
+            "Соперничество",
+            "Сотрудничество",
+            "Компромисс",
+            "Избегание",
+            "Приспособление"
+        ];
+
+        const styleDescriptions = [
+            "Стремление добиться удовлетворения своих интересов в ущерб другому. Активная, но не всегда конструктивная стратегия.",
+            "Участники приходят к альтернативе, полностью удовлетворяющей интересы обеих сторон. Требует открытости и доверия.",
+            "Урегулирование разногласий путём взаимных уступок. Частичное удовлетворение интересов каждой стороны.",
+            "Отсутствие стремления к кооперации и отсутствие тенденции к достижению собственных целей. Уход от конфликта.",
+            "Принесение в жертву собственных интересов ради интересов другого. Пассивная, уступчивая стратегия."
+        ];
+
+        // ===== СОСТОЯНИЕ =====
+        let answers = new Array(30).fill(null); // null, 'A' или 'B'
+        let currentIndex = 0;
+        let testCompleted = false;
+
+        // ===== DOM =====
+        const questionsContainer = document.getElementById('questionsContainer');
+        const resultsContainer = document.getElementById('results');
+        const resultsList = document.getElementById('resultsList');
+        const progressWrap = document.getElementById('progressWrap');
+        const progressFill = document.getElementById('progressFill');
+        const currentQSpan = document.getElementById('currentQ');
+        const progressPercent = document.getElementById('progressPercent');
+        const instruction = document.getElementById('instruction');
+
+        // ===== РЕНДЕР ВОПРОСОВ =====
+        function renderQuestions() {
+            questionsContainer.innerHTML = '';
+            questions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = 'question-card' + (idx === currentIndex ? ' active' : '');
+                card.dataset.index = idx;
+
+                const isLast = idx === 29;
+
+                card.innerHTML = `
+                    <div class="question-number">Вопрос ${idx + 1}</div>
+                    <div class="question-text">Выберите суждение, более типичное для вашего поведения:</div>
+                    <div class="options">
+                        <div class="option ${answers[idx] === 'A' ? 'selected' : ''}" data-answer="A" data-q="${idx}">
+                            <div class="letter">А</div>
+                            <div class="option-text">${q.a}</div>
+                        </div>
+                        <div class="option ${answers[idx] === 'B' ? 'selected' : ''}" data-answer="B" data-q="${idx}">
+                            <div class="letter">Б</div>
+                            <div class="option-text">${q.b}</div>
+                        </div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="prevQuestion()" ${idx === 0 ? 'disabled' : ''}>Назад</button>
+                        ${isLast
+                            ? `<button class="btn btn-primary" id="finishBtn" onclick="finishTest()" ${answers[idx] === null ? 'disabled' : ''}>Завершить</button>`
+                            : `<button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" ${answers[idx] === null ? 'disabled' : ''}>Далее</button>`
+                        }
+                    </div>
+                `;
+
+                // Обработчики выбора
+                card.querySelectorAll('.option').forEach(opt => {
+                    opt.addEventListener('click', function() {
+                        const qIdx = parseInt(this.dataset.q);
+                        const answer = this.dataset.answer;
+                        selectAnswer(qIdx, answer);
+                    });
+                });
+
+                questionsContainer.appendChild(card);
+            });
+        }
+
+        function selectAnswer(qIdx, answer) {
+            answers[qIdx] = answer;
+
+            // Обновить UI выбранного варианта
+            const card = questionsContainer.querySelector(`.question-card[data-index="${qIdx}"]`);
+            card.querySelectorAll('.option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.answer === answer);
+            });
+
+            // Активировать кнопку «Далее» / «Завершить» на текущем вопросе
+            const nextBtn = card.querySelector('#nextBtn');
+            const finishBtn = card.querySelector('#finishBtn');
+            if (nextBtn) nextBtn.disabled = false;
+            if (finishBtn) finishBtn.disabled = false;
+
+            updateProgress();
+        }
+
+        // ===== НАВИГАЦИЯ =====
+        function goToQuestion(index) {
+            if (index < 0 || index >= 30) return;
+            currentIndex = index;
+            document.querySelectorAll('.question-card').forEach((card, i) => {
+                card.classList.toggle('active', i === currentIndex);
+            });
+            updateProgress();
+            // Прокрутка к началу
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextQuestion() {
+            // Защита: не переходить, если текущий вопрос не отвечен
+            if (answers[currentIndex] === null) {
+                return;
+            }
+            if (currentIndex < 29) {
+                goToQuestion(currentIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                goToQuestion(currentIndex - 1);
+            }
+        }
+
+        function updateProgress() {
+            const answered = answers.filter(a => a !== null).length;
+            const percent = Math.round((answered / 30) * 100);
+            progressFill.style.width = percent + '%';
+            progressPercent.textContent = percent + '%';
+            currentQSpan.textContent = currentIndex + 1;
+        }
+
+        // ===== ЗАВЕРШЕНИЕ ТЕСТА =====
+        function finishTest() {
+            // Защита: не завершать, если текущий вопрос не отвечен
+            if (answers[currentIndex] === null) {
+                return;
+            }
+
+            // Проверка, что все вопросы отвечены
+            const unanswered = answers.filter(a => a === null).length;
+            if (unanswered > 0) {
+                alert('Пожалуйста, ответьте на все вопросы. Осталось: ' + unanswered);
+                const firstUnanswered = answers.findIndex(a => a === null);
+                if (firstUnanswered !== -1) goToQuestion(firstUnanswered);
+                return;
+            }
+
+            testCompleted = true;
+            showResults();
+        }
+
+        // ===== РЕЗУЛЬТАТЫ =====
+        function calculateScores() {
+            const scores = [0, 0, 0, 0, 0];
+            for (let i = 0; i < 30; i++) {
+                const answer = answers[i]; // 'A' или 'B'
+                const answerNum = answer === 'A' ? 1 : 2;
+                const row = key[i];
+                for (let s = 0; s < 5; s++) {
+                    if (row[s] === answerNum) {
+                        scores[s]++;
+                    }
+                }
+            }
+            return scores;
+        }
+
+        function showResults() {
+            const scores = calculateScores();
+            const maxScore = Math.max(...scores);
+
+            // Скрыть вопросы, показать результаты
+            questionsContainer.style.display = 'none';
+            progressWrap.style.display = 'none';
+            instruction.style.display = 'none';
+            resultsContainer.classList.add('active');
+
+            // Сортировка по убыванию для наглядности
+            const indices = [0, 1, 2, 3, 4];
+            indices.sort((a, b) => scores[b] - scores[a]);
+
+            resultsList.innerHTML = '';
+            indices.forEach((idx) => {
+                const score = scores[idx];
+                const percent = Math.round((score / 30) * 100);
+                const isMax = score === maxScore && score > 0;
+
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                if (isMax) {
+                    item.style.borderLeftColor = 'var(--deep-green)';
+                    item.style.background = '#eef7e5';
+                }
+
+                item.innerHTML = `
+                    <div class="result-header">
+                        <span class="result-name">${isMax ? '★ ' : ''}${styleNames[idx]}</span>
+                        <span class="result-score">${score} / 30</span>
+                    </div>
+                    <div class="result-bar-wrap">
+                        <div class="result-bar" style="width: ${percent}%;"></div>
+                    </div>
+                    <div class="result-desc">${styleDescriptions[idx]}</div>
+                `;
+                resultsList.appendChild(item);
+            });
+
+            // Прокрутка к результатам
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== ПЕРЕЗАПУСК =====
+        function restartTest() {
+            answers = new Array(30).fill(null);
+            currentIndex = 0;
+            testCompleted = false;
+
+            // Показать вопросы, скрыть результаты
+            questionsContainer.style.display = 'block';
+            progressWrap.style.display = 'block';
+            instruction.style.display = 'block';
+            resultsContainer.classList.remove('active');
+
+            renderQuestions();
+            goToQuestion(0);
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        function init() {
+            renderQuestions();
+            progressWrap.style.display = 'block';
+            updateProgress();
+        }
+
+        init();
+    </script>
+</body>
+</html>
